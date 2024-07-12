@@ -1,0 +1,9 @@
+langchain 
+PyPDF2 
+python-dotenv 
+faiss-cpu 
+google-generativeai
+chromadb
+langchain_google_genai
+PyMuPDF
+

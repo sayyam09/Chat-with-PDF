@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/dashboard.css')}}">
+    <title>Chat Interface</title>
+</head>
+<body>
+<div class="chat-container">
+  <div class="header">
+    <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo">
+    </div>
+    <p id="logo_name">planet</p>
+
+    <label for="file-upload" class="upload-btn">
+        <img src="{{ url_for('static', filename='images/plus_icon.png') }}" alt="Upload" width="20" height="20">
+        Upload PDF
+    </label>
+    <input type="file" id="file-upload" style="display:none">
+  </div>
+  <div class="current_uploaded_file" id="current_uploaded_file">
+    <p id="uploaded-file-label">Uploaded File: None</p>
+  </div>
+
+  <div class="modal" id="errorModal">
+    <div class="modal-content">
+      <p class="error-title">Ooops!</p>
+      <p class="error-msg">Unsupported file format. Please upload a PDF file.</p>
+      <button class="ok_button" id="okBtn">OK</button>
+    </div>
+  </div>
+
+  <div id="upload-progress" class="upload-progress">
+    <div class="spinner"></div>
+    <p>Uploading PDF...</p>
+   </div>
+
+  </div>
+  <div class="chat-area" id="chat-area">
+    <!-- Chat messages will go here -->
+  </div>
+
+  <div class="message-input">
+    <input type="text" class="input-field" id="question-input" placeholder="Ask a question...">
+    <button class="send-btn" onclick= askQuestion()>➤</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const uploadBtn = document.querySelector('.upload-btn');
+    const fileInput = document.getElementById('file-upload');
+    const uploadedFileLabel = document.getElementById('uploaded-file-label');
+
+    uploadBtn.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default behavior
+        fileInput.click(); // Manually trigger file input click
+    });
+
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file && file.type === 'application/pdf') {
+            uploadFile(file);
+        } else {
+            var message1 = "Ooops!";
+            showErrorModal(message1, 'Unsupported file format. Please upload a PDF file.');
+        }
+    });
+
+    document.getElementById('okBtn').addEventListener('click', function() {
+        document.getElementById('errorModal').style.display = 'none';
+    });
+
+    function showErrorModal(message1, message2) {
+        var modal = document.getElementById('errorModal');
+        var errorTitle = modal.querySelector('.error-title');
+        var errorMessage = modal.querySelector('.error-msg');
+        errorTitle.innerHTML = message1;
+        errorMessage.innerHTML = message2;
+        modal.style.display = 'block';
+    }
+
+    function uploadFile(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Show progress circle
+        document.getElementById('upload-progress').style.display = 'flex';
+        
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('upload-progress').style.display = 'none';
+                document.getElementById('current_uploaded_file').style.display = 'block';
+                var message1 = "Congratulations";
+                showErrorModal(message1,'File Uploaded Successfuly!.');
+                uploadedFileLabel.textContent = `${data.filename}`; // Update UI with uploaded filename
+            } else {
+                alert('Error uploading file. Please try again.');
+            }
+        })
+        .catch(error => {
+            // Hide progress circle on error
+            document.getElementById('upload-progress').style.display = 'none';
+            console.error('Error:', error);
+            alert('An error occurred while uploading the file.');
+        });
+    }
+});
+
+function formatMessageText(messageText) {
+    // Regular expression to match bold text format: **text**
+    var boldRegex = /\*\*(.*?)\*\*/g;
+    // Replace bold text with bold HTML tags
+    var formattedText = messageText.replace(boldRegex, '<strong>$1</strong>');
+    return formattedText;
+}
+function askQuestion() {
+    var questionInput = document.getElementById('question-input').value;
+    var chatArea = document.getElementById('chat-area');
+    var inputField = document.getElementById('question-input');
+
+    // Clear the input field after asking a question
+    inputField.value = '';
+
+    // Add space between question and previous messages
+    chatArea.innerHTML += `<div class="message-space"></div>`;
+
+    // Add question with image
+    chatArea.innerHTML += `
+        <div class="message-row">
+            <img src={{ url_for('static', filename='images/You.jpg') }} alt="Question Image" class="message-image">
+            <div class="message-text">${questionInput}</div>
+        </div>
+    `;
+
+    // Add a "thinking" message while waiting for the response
+    chatArea.innerHTML += `
+        <div class="message-row">
+            <img src={{ url_for('static', filename='images/logo1.png') }} alt="Thinking Image" class="message-image">
+            <div class="message-text">Analyzing...</div>
+        </div>
+    `;
+
+    var formData = new FormData();
+    formData.append('question', questionInput);
+
+    fetch('/ask', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("\n data coming from backend with answer : ", data);
+        if (data.success) {
+            console.log("\n Data is successfully came here! ");
+            // Remove the "Analyzing" message
+            var thinkingMessage = chatArea.querySelector('.message-row:last-child');
+            thinkingMessage.parentNode.removeChild(thinkingMessage);
+
+            // Add space between question and answer
+            chatArea.innerHTML += `<div class="message-space"></div>`;
+
+            // Add answer with image
+            chatArea.innerHTML += `
+                <div class="message-row">
+                    <img src={{ url_for('static', filename='images/logo1.png') }} alt="Answer Image" class="message-image">
+                    <div class="message-text">${formatMessageText(data.answer.output_text)}</div>
+                </div>
+            `;
+        } else {
+            alert('Error fetching answer. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while fetching the answer.');
+    });
+}
+</script>
+</body>
+</html>

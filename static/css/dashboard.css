@@ -1,0 +1,202 @@
+body,html {
+    height: 100%;
+    margin: 0;
+    font-family: DM Sans;
+    letter-spacing: 0.5px;
+}
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+.header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+.logo {
+    font-weight: bold;
+    font-size: 24px;
+    cursor: pointer;
+}
+.logo img{
+    width: 100px;
+    height: 39px;
+    cursor: pointer;
+}
+#logo_name {
+    font-weight: bolder;
+    margin-left: -87%;
+    font-size: 19px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.upload-btn {
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    border-radius: 7px;
+    background-color: white;
+    border : 2px solid black;
+    font-size : 14px;
+}
+.upload-btn img {
+    margin-right: 8px;
+}
+.chat-area {
+    flex-grow: 1;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 30px;
+    padding-bottom : 30px;
+    overflow-y: auto;
+    height: 60%;
+    margin-top: 17px;
+}
+.message-input {
+    display: flex;
+    padding-left: 90px;
+    padding-right: 90px;
+    padding-top: 20px;
+    padding-bottom : 20px;
+    margin-bottom : 10px;
+    
+}
+.input-field {
+    flex-grow: 1;
+    padding: 20px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    font-size: 15px;
+    /*background-color: #fcf8f8;*/
+}
+.send-btn {
+    background: #14ae5c;
+    padding: 10px 20px;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 20px;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    
+    }
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+.ok_button{
+        background-color: #14ae5c;
+        padding: 20px;
+        color: white;
+        border-radius: 35px;
+        cursor : pointer;
+        border : none;
+        font-weight : bold;
+        margin-left: 40%;
+    }
+.error-title {
+        font-size: 24px;
+        color: red;
+        text-align: center;
+        }
+
+.error-msg {
+        font-size: 16px;
+        color: black;
+        text-align: center;
+        margin-top: 10px;
+        }
+
+.success-title {
+        font-size: 24px;
+        color: #14ae5c;
+        text-align: center;
+        }
+
+.success-msg {
+        font-size: 16px;
+        color: black;
+        text-align: center;
+        margin-top: 10px;
+        }
+.current_uploaded_file{
+    display: none;
+    width: fit-content;
+    /* border: 2px solid; */
+    margin-left: 40%;
+    margin-top: -68px;
+    color : #14ae5c;
+    cursor : pointer;
+}
+.message-space {
+    margin-bottom: 30px; 
+}
+
+.message-row {
+    display: flex;
+    align-items: flex-start; 
+    margin-bottom: 40px;
+}
+
+.message-image {
+    width: 40px; 
+    height: 40px; 
+    margin-right: 10px; 
+}
+
+.message-text {
+    flex-grow: 1;
+    font-size: 16px;
+    margin-top: 10px;
+    white-space: pre-wrap; 
+}
+
+.upload-progress {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #14ae5c;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
